@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:16.0-alpine3.17
+    container_name: postgres-db
+    ports:
+      - 5555:5432
+    env_file:
+      - .env
+    volumes:
+      - ./.data/postgres:/var/lib/postgresql/data
+
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio-storage
+    ports:
+      - 9000:9000
+      - 9001:9001
+    env_file:
+      - .env
+    volumes:
+      - ./.data/minio:/data
+    command: server /data --console-address ":9001"
+  # auth:
+  #   build:
+  #     context: .
+  #     dockerfile: dockerfile
+  #   container_name: auth-service
+  #   ports:
+  #     - "8001:8001"
+  #   depends_on:
+  #     - postgres
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./src:/app
+  #   command: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
+
+  # storage:
+  #   container_name: storage-service
+  #   build:
+  #     context: .
+  #     dockerfile: dockerfile
+  #   ports:
+  #     - "8002:8002"
+  #   depends_on:
+  #     - minio
+  #     - postgres
+  #     - auth
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./src:/app
+  #   command: uvicorn main:app --host 0.0.0.0 --port 8002 --reload
