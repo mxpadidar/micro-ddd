@@ -7,7 +7,7 @@ from auth_service.domain.models.user import User
 from auth_service.domain.unit_of_work import UnitOfWork
 from shared.auth_service import AuthService
 from shared.dtos import TokenPayload
-from shared.exceptions import InvalidCredentialsException
+from shared.errors import InvalidCredentialsError
 from shared.protocols import UserProtocol
 from shared.settings import ACCESS_TOKEN_LIFETIME, JWT_ALGORITHM, SECRET_KEY
 
@@ -36,7 +36,7 @@ class AuthServiceImpl(AuthService):
             if self._verify_password(password, user.hashed_password):
                 return user
 
-            raise InvalidCredentialsException
+            raise InvalidCredentialsError
 
     def generate_token(self, user: User) -> str:
         return self._generate_jwt(

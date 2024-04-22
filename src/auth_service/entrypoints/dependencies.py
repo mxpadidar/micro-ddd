@@ -5,7 +5,7 @@ from auth_service.adapters.auth_service_impl import AuthServiceImpl
 from auth_service.adapters.unit_of_work_impl import UnitOfWorkImpl
 from auth_service.domain.unit_of_work import UnitOfWork
 from shared.auth_service import AuthService
-from shared.exceptions import InvalidCredentialsException
+from shared.errors import InvalidCredentialsError
 from shared.protocols import UserProtocol
 from shared.settings import JWT_ALGORITHM, SECRET_KEY
 
@@ -25,7 +25,7 @@ def get_current_user(
 ) -> UserProtocol:
 
     if (auth_header := request.headers.get("Authorization")) is None:
-        raise InvalidCredentialsException
+        raise InvalidCredentialsError
 
     token = auth_header.replace("Bearer ", "")
 

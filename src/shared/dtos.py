@@ -6,3 +6,10 @@ from datetime import datetime
 class TokenPayload:
     user_id: int
     expires_at: datetime
+
+
+@dataclass
+class FileDTO:
+    id: int
+    object_name: str
+    url: str

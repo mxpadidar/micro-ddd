@@ -3,9 +3,10 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context  # type: ignore
-from auth_service.adapters.orm.tables import users  # noqa
+from auth_service.adapters.orm import tables as auth_tables  # noqa
 from shared.db_setup import registry
 from shared.settings import POSTGRES_URI
+from storage_service.adapters.orm import tables as storage_tables  # noqa
 
 config = context.config
 

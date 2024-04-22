@@ -1,0 +1,13 @@
+from shared.base import BaseError
+
+
+class InvalidRequestError(BaseError): ...
+
+
+class NotFoundError(BaseError): ...
+
+
+class ConflictError(BaseError): ...
+
+
+class InvalidCredentialsError(BaseError): ...

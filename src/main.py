@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from auth_service.entrypoints.routes import router as auth_router
 from shared.db_setup import db_health_check
-from storage_service.routes import router as storage_router
+from storage_service.entrypoints.routes import router as storage_router
 
 app = FastAPI()
 

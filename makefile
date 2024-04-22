@@ -26,3 +26,10 @@ commit-and-push:
 	git add .; \
 	git commit -m "$$message"; \
 	git push -u origin `git rev-parse --abbrev-ref HEAD`
+
+migrations:
+	@read -p "Enter migrations message: " message; \
+	alembic revision --autogenerate -m "$$message"
+
+migrate:
+	alembic upgrade head

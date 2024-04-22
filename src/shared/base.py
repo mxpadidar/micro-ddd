@@ -1,5 +1,6 @@
 from abc import ABC
 from datetime import datetime
+from enum import Enum
 
 
 class BaseModel(ABC):
@@ -31,3 +32,9 @@ class BaseEvent: ...
 
 
 class BaseQuery: ...
+
+
+class BaseEnum(Enum): ...
+
+
+class BaseError(Exception): ...

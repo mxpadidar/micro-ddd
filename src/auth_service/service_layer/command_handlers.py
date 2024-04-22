@@ -6,7 +6,7 @@ from auth_service.service_layer.commands import (
 )
 from shared.auth_service import AuthService
 from shared.base import BaseCommand
-from shared.exceptions import InvalidCredentialsException
+from shared.errors import InvalidCredentialsError
 
 
 def user_register_handler(command: UserRegisterCommand, auth_service: AuthService):
@@ -19,7 +19,7 @@ def user_authenticate_handler(
 ):
     user = auth_service.authenticate_user(command.email, command.password)
     if not user:
-        raise InvalidCredentialsException
+        raise InvalidCredentialsError
     token = auth_service.generate_token(user)
     return token
 

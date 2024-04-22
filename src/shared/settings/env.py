@@ -10,7 +10,7 @@ class Env(BaseSettings):
     BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent
 
     AUTH_SERVICE_URL: str = "http://auth:8001"
-    STORAGE_SERVICE_URL: str = "http://storage:8002"
+    STORAGE_SERVICE_URL: str = "http://storage:8002/storage"
 
     # PostgreSQL
     POSTGRES_DRIVER: str = "postgresql+psycopg"
@@ -19,6 +19,12 @@ class Env(BaseSettings):
     POSTGRES_USER: str = "postgres_user"
     POSTGRES_PASSWORD: str = "postgres_pass"
     POSTGRES_DB: str = "postgres_db"
+
+    # Minio
+    MINIO_ENDPOINT: str = "localhost:9000"
+    MINIO_ACCESS_KEY: str = "minio"
+    MINIO_SECRET_KEY: str = "minio123"
+    MINIO_BUCKET_NAME: str = "files"
 
     @property
     def POSTGRES_URI(self):
