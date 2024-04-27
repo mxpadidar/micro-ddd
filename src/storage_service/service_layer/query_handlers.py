@@ -9,6 +9,6 @@ def get_file_url(query: GetFileQuery, s3_client: S3Client) -> str:
     return s3_client.get_file_by_id(query.file_id)
 
 
-query_handlers: dict[Type[BaseQuery], Callable] = {
+query_handlers_mapper: dict[Type[BaseQuery], Callable] = {
     GetFileQuery: get_file_url,
 }

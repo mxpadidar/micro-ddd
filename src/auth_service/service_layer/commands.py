@@ -13,3 +13,9 @@ class UserRegisterCommand(BaseCommand):
 class UserAuthenticateCommand(BaseCommand):
     email: str
     password: str
+
+
+@dataclass
+class UserAddAvatarCommand(BaseCommand):
+    user_id: int
+    file_id: int

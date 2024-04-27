@@ -6,7 +6,6 @@ files = sa.Table(
     "files",
     registry.metadata,
     sa.Column("id", sa.Integer, primary_key=True),
-    sa.Column("bucket", sa.String),
     sa.Column("category", sa.String),
     sa.Column("name", sa.String),
     sa.Column("mime_type", sa.String),

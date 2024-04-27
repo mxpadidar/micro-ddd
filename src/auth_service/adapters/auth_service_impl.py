@@ -65,14 +65,11 @@ class AuthServiceImpl(AuthService):
         self, token: str, secret_key: str, jwt_algorithm: str
     ) -> TokenPayload:
 
-        print("token    ", token)
-
         try:
             payload = jwt.decode(
                 token=token, key=secret_key, algorithms=[jwt_algorithm]
             )
 
-            print(payload)
             return TokenPayload(**payload)
         except Exception:
             raise Exception("Invalid token")

@@ -9,3 +9,7 @@ class UserRegisterRequest(BaseModel):
 class UserLoginRequest(BaseModel):
     email: str
     password: str
+
+
+class UserAvatarRequest(BaseModel):
+    file_id: int

@@ -21,6 +21,14 @@ async def login_user(data: rm.UserLoginRequest):
     return bus.handle(command)
 
 
+@router.put("/avatar")
+async def add_user_avatar(
+    data: rm.UserAvatarRequest, user: UserProtocol = Depends(get_current_user)
+):
+    command = commands.UserAddAvatarCommand(user_id=user.id, file_id=data.file_id)
+    return await bus.handle(command)
+
+
 @router.get("/me")
 def user_profile(user: UserProtocol = Depends(get_current_user)):
     return user.serialize()

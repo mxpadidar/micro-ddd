@@ -10,6 +10,7 @@ users = sa.Table(
     sa.Column("hashed_password", sa.String),
     sa.Column("is_active", sa.Boolean),
     sa.Column("is_superuser", sa.Boolean),
+    sa.Column("avatar_file_id", sa.Integer, nullable=True),
     sa.Column("created_at", sa.DateTime(timezone=True)),
     sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
     sa.Column("deleted_at", sa.DateTime(timezone=True), nullable=True),

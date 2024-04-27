@@ -21,34 +21,35 @@ services:
     volumes:
       - ./.data/minio:/data
     command: server /data --console-address ":9001"
-  # auth:
-  #   build:
-  #     context: .
-  #     dockerfile: dockerfile
-  #   container_name: auth-service
-  #   ports:
-  #     - "8001:8001"
-  #   depends_on:
-  #     - postgres
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - ./src:/app
-  #   command: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
 
-  # storage:
-  #   container_name: storage-service
-  #   build:
-  #     context: .
-  #     dockerfile: dockerfile
-  #   ports:
-  #     - "8002:8002"
-  #   depends_on:
-  #     - minio
-  #     - postgres
-  #     - auth
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - ./src:/app
-  #   command: uvicorn main:app --host 0.0.0.0 --port 8002 --reload
+  auth:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: auth-service
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
+
+  storage:
+    container_name: storage-service
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "8002:8002"
+    depends_on:
+      - minio
+      - postgres
+      - auth
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8002 --reload

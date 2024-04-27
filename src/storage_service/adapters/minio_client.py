@@ -22,6 +22,7 @@ class MinioClient(S3Client):
         self._access_key = access_key
         self._secret_key = secret_key
         self._bucket = bucket
+        self._ensure_bucket_exists()
         super().__init__(uow)
 
     @property
@@ -31,6 +32,7 @@ class MinioClient(S3Client):
     @property
     def client(self) -> Minio:
         if self._client is None:
+
             self._client = Minio(
                 endpoint=self._endpoint,
                 access_key=self._access_key,
@@ -50,3 +52,7 @@ class MinioClient(S3Client):
 
     def _delete(self, object_name: str) -> None:
         self.client.remove_object(bucket_name=self._bucket, object_name=object_name)
+
+    def _ensure_bucket_exists(self):
+        if not self.client.bucket_exists(self._bucket):
+            self.client.make_bucket(self._bucket)
