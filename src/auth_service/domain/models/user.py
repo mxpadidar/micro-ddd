@@ -2,6 +2,7 @@ from shared.base import BaseModel
 
 
 class User(BaseModel):
+    id: int
     email: str
     hashed_password: str
     is_superuser: bool

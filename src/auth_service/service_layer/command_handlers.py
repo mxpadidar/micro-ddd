@@ -1,30 +1,55 @@
+from datetime import datetime
 from typing import Callable, Type
+from xml.dom import NotFoundErr
 
+from auth_service.domain.jwt_service import JWTService
 from auth_service.domain.unit_of_work import UnitOfWork
+from auth_service.domain.user_manager import UserManager
 from auth_service.service_layer.commands import (
     UserAddAvatarCommand,
     UserAuthenticateCommand,
     UserRegisterCommand,
+    VerifyTokenCommand,
 )
-from shared.auth_service import AuthService
 from shared.base import BaseCommand
-from shared.errors import InvalidCredentialsError
+from shared.dtos import TokenPayload
+from shared.errors import ConflictError, InvalidCredentialsError
 from shared.storage_service import StorageService
 
 
-def user_register_handler(command: UserRegisterCommand, auth_service: AuthService):
-    user = auth_service.register_user(command.email, command.password)
-    return user
+def verify_token_handler(
+    command: VerifyTokenCommand, user_manager: UserManager, jwt_service: JWTService
+):
+    try:
+        payload = jwt_service.decode(command.token)
+        return user_manager.get_user_by_email(payload.email).serialize()
+    except InvalidCredentialsError:
+        raise InvalidCredentialsError
+    except NotFoundErr:
+        raise InvalidCredentialsError
+
+
+def user_register_handler(command: UserRegisterCommand, user_manager: UserManager):
+    try:
+        user = user_manager.create_user(command.email, command.password)
+        return user
+    except ConflictError:
+        raise ConflictError
 
 
 def user_authenticate_handler(
-    command: UserAuthenticateCommand, auth_service: AuthService
+    command: UserAuthenticateCommand, user_manager: UserManager, jwt_service: JWTService
 ):
-    user = auth_service.authenticate_user(command.email, command.password)
-    if not user:
+    try:
+        user = user_manager.authenticate_user(command.email, command.password)
+        return jwt_service.encode(
+            TokenPayload(
+                email=user.email,
+                expires_at=datetime.now() + jwt_service.access_token_lifetime,
+            )
+        )
+    except InvalidCredentialsError:
         raise InvalidCredentialsError
-    token = auth_service.generate_token(user)
-    return token
 
 
 async def user_add_avatar_handler(
@@ -43,4 +68,5 @@ command_handlers_mapper: dict[Type[BaseCommand], Callable] = {
     UserRegisterCommand: user_register_handler,
     UserAuthenticateCommand: user_authenticate_handler,
     UserAddAvatarCommand: user_add_avatar_handler,
+    VerifyTokenCommand: verify_token_handler,
 }

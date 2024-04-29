@@ -22,6 +22,17 @@ services:
       - ./.data/minio:/data
     command: server /data --console-address ":9001"
 
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq-broker
+    ports:
+      - 5672:5672
+      - 15672:15672
+    env_file:
+      - .env
+    volumes:
+      - ./.data/rabbitmq:/var/lib/rabbitmq
+
   auth:
     build:
       context: .
@@ -31,6 +42,7 @@ services:
       - "8001:8001"
     depends_on:
       - postgres
+      - rabbitmq
     env_file:
       - .env
     volumes:
@@ -48,6 +60,7 @@ services:
       - minio
       - postgres
       - auth
+      - rabbitmq
     env_file:
       - .env
     volumes:

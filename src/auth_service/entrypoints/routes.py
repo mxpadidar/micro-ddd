@@ -15,6 +15,12 @@ async def register_user(data: rm.UserRegisterRequest):
     return bus.handle(command)
 
 
+@router.post("/token/verify")
+async def verify_token(data: rm.UserVerifyTokenRequest):
+    command = commands.VerifyTokenCommand(token=data.token)
+    return bus.handle(command)
+
+
 @router.post("/login")
 async def login_user(data: rm.UserLoginRequest):
     command = commands.UserAuthenticateCommand(email=data.email, password=data.password)

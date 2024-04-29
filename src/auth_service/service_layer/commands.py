@@ -19,3 +19,8 @@ class UserAuthenticateCommand(BaseCommand):
 class UserAddAvatarCommand(BaseCommand):
     user_id: int
     file_id: int
+
+
+@dataclass
+class VerifyTokenCommand(BaseCommand):
+    token: str

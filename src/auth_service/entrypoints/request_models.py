@@ -13,3 +13,7 @@ class UserLoginRequest(BaseModel):
 
 class UserAvatarRequest(BaseModel):
     file_id: int
+
+
+class UserVerifyTokenRequest(BaseModel):
+    token: str

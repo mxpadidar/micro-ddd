@@ -17,7 +17,6 @@ class S3Client(ABC):
     valid_mime_types: list[str] = ["image/jpeg", "image/png"]
 
     def __init__(self, uow: UnitOfWork) -> None:
-
         self.uow = uow
 
     def get_file_by_id(self, file_id: int) -> str:

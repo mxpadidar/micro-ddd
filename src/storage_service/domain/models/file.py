@@ -17,3 +17,13 @@ class File(BaseModel):
     @property
     def object_name(self) -> str:
         return f"{self.category}/{self.name}"
+
+    def serialize(self, **kwargs) -> dict:
+        return {
+            "id": self.id,
+            "category": self.category,
+            "name": self.name,
+            "mime_type": self.mime_type,
+            "size": self.size,
+            **kwargs,
+        }

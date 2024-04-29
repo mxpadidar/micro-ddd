@@ -1,3 +1,4 @@
+from shared.auth_service import AuthService
 from shared.message_bus import MessageBus
 from shared.settings import MINIO_ACCESS_KEY, MINIO_ENDPOINT, MINIO_SECRET_KEY
 from shared.utils import inject_dependencies
@@ -19,6 +20,8 @@ s3_client: S3Client = MinioClient(
     secret_key=MINIO_SECRET_KEY,
     uow=uow,
 )
+
+auth_service = AuthService()
 
 
 DEPENDENCIES = {"uow": uow, "s3_client": s3_client}

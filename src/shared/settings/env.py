@@ -9,7 +9,7 @@ class Env(BaseSettings):
     DEBUG: bool = True
     BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent
 
-    AUTH_SERVICE_URL: str = "http://auth:8001"
+    AUTH_SERVICE_URL: str = "http://auth:8001/users"
     STORAGE_SERVICE_URL: str = "http://storage:8002/storage"
 
     # PostgreSQL
@@ -25,6 +25,10 @@ class Env(BaseSettings):
     MINIO_ACCESS_KEY: str = "minio"
     MINIO_SECRET_KEY: str = "minio123"
     MINIO_BUCKET_NAME: str = "files"
+
+    # RabbitMQ
+    RABBITMQ_DEFAULT_USER: str = "guest"
+    RABBITMQ_DEFAULT_PASS: str = "guest"
 
     @property
     def POSTGRES_URI(self):

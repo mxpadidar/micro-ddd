@@ -1,4 +1,5 @@
 from abc import ABC
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import Enum
 
@@ -38,3 +39,10 @@ class BaseEnum(Enum): ...
 
 
 class BaseError(Exception): ...
+
+
+@dataclass
+class BaseDto:
+
+    def to_dict(self) -> dict:
+        return asdict(self)
