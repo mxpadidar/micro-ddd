@@ -1,21 +1,24 @@
 from fastapi import APIRouter, Depends, File, Form, UploadFile
 
+from shared.protocols import UserProtocol
 from storage_service.bootstrap import bus
 from storage_service.entrypoints.dependencies import current_user
-from storage_service.service_layer.commands import CreateFileCommand
-from storage_service.service_layer.queries import GetFileQuery
+from storage_service.service_layer.messages import CreateFileCommand, GetFileQuery
 
 router = APIRouter(prefix="/storage", tags=["Storage"])
 
 
 @router.post("")
 async def upload_file(
-    file: UploadFile = File(...), category: str = Form(...), user=Depends(current_user)
+    file: UploadFile = File(...),
+    category: str = Form(...),
+    user: UserProtocol = Depends(current_user),
 ):
     command = CreateFileCommand(
         file_bytes=await file.read(),
         category=category,
         name=file.filename or "some_file_name",
+        user=user,
     )
     return bus.handle(command)
 

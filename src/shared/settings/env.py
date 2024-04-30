@@ -27,6 +27,7 @@ class Env(BaseSettings):
     MINIO_BUCKET_NAME: str = "files"
 
     # RabbitMQ
+    RABBITMQ_HOST: str = "rabbitmq"
     RABBITMQ_DEFAULT_USER: str = "guest"
     RABBITMQ_DEFAULT_PASS: str = "guest"
 

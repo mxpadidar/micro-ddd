@@ -2,7 +2,7 @@ from typing import Callable, Type
 
 from shared.base import BaseQuery
 from storage_service.domain.s3_client import S3Client
-from storage_service.service_layer.queries import GetFileQuery
+from storage_service.service_layer.messages import GetFileQuery
 
 
 def get_file_url(query: GetFileQuery, s3_client: S3Client) -> str:

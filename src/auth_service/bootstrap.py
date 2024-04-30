@@ -4,10 +4,14 @@ from auth_service.adapters.unit_of_work_impl import UnitOfWorkImpl
 from auth_service.adapters.user_manager_impl import UserManagerImpl
 from auth_service.service_layer.command_handlers import command_handlers_mapper
 from auth_service.service_layer.query_handlers import query_handlers_mapper
+from shared.broker_service import BrokerService, RabbitMQService
 from shared.message_bus import MessageBus
 from shared.settings import (
     ACCESS_TOKEN_LIFETIME,
     JWT_ALGORITHM,
+    RABBITMQ_HOST,
+    RABBITMQ_PASS,
+    RABBITMQ_USER,
     SECRET_KEY,
     STORAGE_SERVICE_URL,
 )
@@ -25,6 +29,11 @@ jwt_service = JWTServiceImpl(
     secret_key=SECRET_KEY,
     jwt_algorithm=JWT_ALGORITHM,
     access_token_lifetime=ACCESS_TOKEN_LIFETIME,
+)
+
+
+broker_service: BrokerService = RabbitMQService(
+    host=RABBITMQ_HOST, user=RABBITMQ_USER, password=RABBITMQ_PASS
 )
 
 storage_service = StorageService(STORAGE_SERVICE_URL)
@@ -50,6 +59,7 @@ INJECTED_QUERY_HANDLERS = {
 
 bus = MessageBus(
     uow=UnitOfWorkImpl(),
+    broker_service=broker_service,
     command_handlers=INJECTED_COMMAND_HANDLERS,
     query_handlers=INJECTED_QUERY_HANDLERS,
 )

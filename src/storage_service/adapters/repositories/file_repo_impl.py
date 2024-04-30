@@ -9,10 +9,10 @@ class FileRepoImpl(FileRepo):
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def add(self, file: File) -> None:
+    def _add(self, file: File) -> None:
         self.session.add(file)
 
-    def get(self, id: int) -> File:
+    def _get(self, id: int) -> File:
         file = self.session.query(File).filter_by(id=id).first()
         if not file:
             raise NotFoundError

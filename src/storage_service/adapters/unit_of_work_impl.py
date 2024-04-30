@@ -13,6 +13,7 @@ class UnitOfWorkImpl(UnitOfWork):
     def __enter__(self) -> UnitOfWork:
         self.session: Session = self.sessionmaker()
         self.files = FileRepoImpl(self.session)
+        self.repositories.add(self.files)
         return super().__enter__()
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:

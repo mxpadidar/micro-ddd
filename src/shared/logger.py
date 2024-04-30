@@ -1,4 +1,5 @@
-from logging import DEBUG, Formatter, getLogger
+import sys
+from logging import DEBUG, Formatter, StreamHandler, getLogger
 
 
 class Logger:
@@ -8,6 +9,11 @@ class Logger:
         self.formatter = Formatter(
             "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
+
+        # Create a StreamHandler for stdout and add it to the logger
+        handler = StreamHandler(sys.stdout)
+        handler.setFormatter(self.formatter)
+        self.logger.addHandler(handler)
 
     def exception(self, message: str) -> None:
         self.logger.exception("-" * 50)

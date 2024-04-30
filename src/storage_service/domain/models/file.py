@@ -27,3 +27,7 @@ class File(BaseModel):
             "size": self.size,
             **kwargs,
         }
+
+    @staticmethod
+    def valid_mime_types() -> list[str]:
+        return ["image/jpeg", "image/png"]

@@ -2,8 +2,11 @@ from io import BytesIO
 
 from minio import Minio
 
+from shared.logger import Logger
+from storage_service.domain.errors import FileDeleteError, FileUploadError
 from storage_service.domain.s3_client import S3Client
-from storage_service.domain.unit_of_work import UnitOfWork
+
+logger = Logger("Minio client")
 
 
 class MinioClient(S3Client):
@@ -11,19 +14,13 @@ class MinioClient(S3Client):
     _client: Minio | None = None
 
     def __init__(
-        self,
-        uow: UnitOfWork,
-        endpoint: str,
-        access_key: str,
-        secret_key: str,
-        bucket: str = "default",
+        self, endpoint: str, access_key: str, secret_key: str, bucket: str = "default"
     ) -> None:
         self._endpoint = endpoint
         self._access_key = access_key
         self._secret_key = secret_key
         self._bucket = bucket
         self._ensure_bucket_exists()
-        super().__init__(uow)
 
     @property
     def base_url(self) -> str:
@@ -41,17 +38,24 @@ class MinioClient(S3Client):
             )
         return self._client
 
-    def _upload(self, file: bytes, category: str, name: str, size: int) -> str:
-        res = self.client.put_object(
-            data=BytesIO(file),
-            bucket_name=self._bucket,
-            object_name=f"{category}/{name}",
-            length=size,
-        )
-        return res.object_name
+    def upload(self, file: bytes, object_name: str) -> None:
+        try:
+            self.client.put_object(
+                data=BytesIO(file),
+                bucket_name=self._bucket,
+                object_name=object_name,
+                length=len(file),
+            )
+        except Exception as error:
+            logger.error(f"Error uploading file: {error}")
+            raise FileUploadError
 
-    def _delete(self, object_name: str) -> None:
-        self.client.remove_object(bucket_name=self._bucket, object_name=object_name)
+    def delete(self, object_name: str) -> None:
+        try:
+            self.client.remove_object(bucket_name=self._bucket, object_name=object_name)
+        except Exception as error:
+            logger.error(f"Error deleting file: {error}")
+            raise FileDeleteError
 
     def _ensure_bucket_exists(self):
         if not self.client.bucket_exists(self._bucket):

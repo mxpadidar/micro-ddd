@@ -7,10 +7,13 @@ class UnitOfWorkImpl(UnitOfWork):
 
     def __init__(self, sessionmaker=sessionmaker):
         self.sessionmaker = sessionmaker
+        self.repos = set()
 
     def __enter__(self):
         self.session = self.sessionmaker()
         self.users = UserRepoImpl(self.session)
+        self.repos.add(self.users)
+        print(len(self.repos))
         return super().__enter__()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
