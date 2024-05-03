@@ -1,13 +1,13 @@
 from shared.auth_service import AuthService
-from shared.broker_service import BrokerService, RabbitMQService
+from shared.message_broker import MessageBroker, RedisMessageBroker
 from shared.message_bus import MessageBus
 from shared.settings import (
     MINIO_ACCESS_KEY,
     MINIO_ENDPOINT,
     MINIO_SECRET_KEY,
-    RABBITMQ_HOST,
-    RABBITMQ_PASS,
-    RABBITMQ_USER,
+    REDIS_DB,
+    REDIS_HOST,
+    REDIS_PORT,
 )
 from shared.utils import inject_dependencies
 from storage_service.adapters.minio_client import MinioClient
@@ -28,14 +28,14 @@ s3_client: S3Client = MinioClient(
     secret_key=MINIO_SECRET_KEY,
 )
 
-broker_service: BrokerService = RabbitMQService(
-    host=RABBITMQ_HOST, user=RABBITMQ_USER, password=RABBITMQ_PASS
+message_broker: MessageBroker = RedisMessageBroker(
+    host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB
 )
 
 auth_service = AuthService()
 
 
-DEPENDENCIES = {"uow": uow, "s3_client": s3_client, "broker_service": broker_service}
+DEPENDENCIES = {"uow": uow, "s3_client": s3_client, "message_broker": message_broker}
 
 
 INJECTED_COMMAND_HANDLERS = {
@@ -51,7 +51,7 @@ INJECTED_QUERY_HANDLERS = {
 
 bus = MessageBus(
     uow=UnitOfWorkImpl(),
-    broker_service=broker_service,
+    message_broker=message_broker,
     command_handlers=INJECTED_COMMAND_HANDLERS,
     query_handlers=INJECTED_QUERY_HANDLERS,
 )

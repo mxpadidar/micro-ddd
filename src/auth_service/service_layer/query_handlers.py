@@ -2,7 +2,7 @@ from typing import Callable, Type
 
 from auth_service.domain.unit_of_work import UnitOfWork
 from auth_service.service_layer.queries import GetUserQuery
-from shared.base import BaseQuery
+from shared.base import Query
 from shared.storage_service import StorageService
 
 
@@ -19,6 +19,6 @@ def get_user_query_handler(
         return user.serialize(avatar=avatar)
 
 
-query_handlers_mapper: dict[Type[BaseQuery], Callable] = {
+query_handlers_mapper: dict[Type[Query], Callable] = {
     GetUserQuery: get_user_query_handler,
 }

@@ -1,16 +1,16 @@
 from dataclasses import dataclass
 
-from shared.base import BaseCommand, BaseEvent, BaseQuery
+from shared.base import Command, Event, Query
 from shared.protocols import UserProtocol
 
 
 @dataclass
-class GetFileQuery(BaseQuery):
+class GetFileQuery(Query):
     file_id: int
 
 
 @dataclass
-class CreateFileCommand(BaseCommand):
+class CreateFileCommand(Command):
     file_bytes: bytes
     category: str
     name: str
@@ -21,7 +21,7 @@ class CreateFileCommand(BaseCommand):
 
 
 @dataclass
-class FileCreatedEvent(BaseEvent):
+class FileCreatedEvent(Event):
     file_id: int
     user: UserProtocol
 

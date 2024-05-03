@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from magic import Magic
 
-from shared.base import BaseCommand
+from shared.base import Command
 from shared.errors import InvalidRequestError
 from storage_service.domain.models.file import File
 from storage_service.domain.s3_client import S3Client
@@ -36,7 +36,7 @@ def create_file_handler(
     return file.serialize()
 
 
-command_handlers_mapper: dict[Type[BaseCommand], Callable] = {
+command_handlers_mapper: dict[Type[Command], Callable] = {
     CreateFileCommand: create_file_handler,
 }
 

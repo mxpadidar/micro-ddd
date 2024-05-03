@@ -1,7 +1,7 @@
-from shared.base import BaseModel
+from shared.base import BaseEntity
 
 
-class File(BaseModel):
+class File(BaseEntity):
     category: str
     name: str
     mime_type: str

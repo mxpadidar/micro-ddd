@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from shared.base import BaseQuery
+from shared.base import Query
 
 
 @dataclass
-class GetUserQuery(BaseQuery):
+class GetUserQuery(Query):
     user_id: int

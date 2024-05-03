@@ -11,7 +11,7 @@ from auth_service.service_layer.commands import (
     UserRegisterCommand,
     VerifyTokenCommand,
 )
-from shared.base import BaseCommand
+from shared.base import Command
 from shared.dtos import TokenPayload
 from shared.errors import ConflictError, InvalidCredentialsError
 from shared.storage_service import StorageService
@@ -64,7 +64,7 @@ async def user_add_avatar_handler(
         return user.serialize(avatar=avatar_url)
 
 
-command_handlers_mapper: dict[Type[BaseCommand], Callable] = {
+command_handlers_mapper: dict[Type[Command], Callable] = {
     UserRegisterCommand: user_register_handler,
     UserAuthenticateCommand: user_authenticate_handler,
     UserAddAvatarCommand: user_add_avatar_handler,

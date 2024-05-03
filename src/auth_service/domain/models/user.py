@@ -1,7 +1,7 @@
-from shared.base import BaseModel
+from shared.base import BaseEntity
 
 
-class User(BaseModel):
+class User(BaseEntity):
     id: int
     email: str
     hashed_password: str

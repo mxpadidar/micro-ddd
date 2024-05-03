@@ -4,14 +4,14 @@ from auth_service.adapters.unit_of_work_impl import UnitOfWorkImpl
 from auth_service.adapters.user_manager_impl import UserManagerImpl
 from auth_service.service_layer.command_handlers import command_handlers_mapper
 from auth_service.service_layer.query_handlers import query_handlers_mapper
-from shared.broker_service import BrokerService, RabbitMQService
+from shared.message_broker import MessageBroker, RedisMessageBroker
 from shared.message_bus import MessageBus
 from shared.settings import (
     ACCESS_TOKEN_LIFETIME,
     JWT_ALGORITHM,
-    RABBITMQ_HOST,
-    RABBITMQ_PASS,
-    RABBITMQ_USER,
+    REDIS_DB,
+    REDIS_HOST,
+    REDIS_PORT,
     SECRET_KEY,
     STORAGE_SERVICE_URL,
 )
@@ -31,10 +31,10 @@ jwt_service = JWTServiceImpl(
     access_token_lifetime=ACCESS_TOKEN_LIFETIME,
 )
 
-
-broker_service: BrokerService = RabbitMQService(
-    host=RABBITMQ_HOST, user=RABBITMQ_USER, password=RABBITMQ_PASS
+message_broker: MessageBroker = RedisMessageBroker(
+    host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB
 )
+
 
 storage_service = StorageService(STORAGE_SERVICE_URL)
 
@@ -59,7 +59,7 @@ INJECTED_QUERY_HANDLERS = {
 
 bus = MessageBus(
     uow=UnitOfWorkImpl(),
-    broker_service=broker_service,
+    message_broker=message_broker,
     command_handlers=INJECTED_COMMAND_HANDLERS,
     query_handlers=INJECTED_QUERY_HANDLERS,
 )

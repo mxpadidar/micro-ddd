@@ -31,6 +31,11 @@ class Env(BaseSettings):
     RABBITMQ_DEFAULT_USER: str = "guest"
     RABBITMQ_DEFAULT_PASS: str = "guest"
 
+    # Redis
+    REDIS_HOST: str = "redis-broker"
+    REDIS_PORT: int = 6379
+    REDIS_DB: int = 0
+
     @property
     def POSTGRES_URI(self):
         return f"{self.POSTGRES_DRIVER}://\

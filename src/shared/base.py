@@ -5,7 +5,7 @@ from enum import Enum
 from typing import Any
 
 
-class BaseModel(ABC):
+class BaseEntity(ABC):
     id: int
 
     created_at: datetime
@@ -29,7 +29,7 @@ class BaseRepo(ABC):
 
     seen: set = set()
 
-    def add(self, entity: BaseModel) -> None:
+    def add(self, entity: BaseEntity) -> None:
         self._add(entity)
         self.seen.add(entity)
 
@@ -39,10 +39,10 @@ class BaseRepo(ABC):
         return entity
 
     @abstractmethod
-    def _get(self, id: int) -> BaseModel: ...
+    def _get(self, id: int) -> BaseEntity: ...
 
     @abstractmethod
-    def _add(self, entity: BaseModel) -> None: ...
+    def _add(self, entity: BaseEntity) -> None: ...
 
 
 class BaseUnitOfWork(ABC):
@@ -66,23 +66,22 @@ class BaseUnitOfWork(ABC):
 
 
 @dataclass
-class BaseCommand:
-    def to_dict(self) -> dict:
-        return asdict(self)
-
-
-@dataclass
-class BaseEvent:
+class BaseMessage(ABC):
 
     def to_dict(self) -> dict:
         return asdict(self)
 
 
 @dataclass
-class BaseQuery:
+class Command(BaseMessage): ...
 
-    def to_dict(self) -> dict:
-        return asdict(self)
+
+@dataclass
+class Event(BaseMessage): ...
+
+
+@dataclass
+class Query(BaseMessage): ...
 
 
 class BaseEnum(Enum): ...

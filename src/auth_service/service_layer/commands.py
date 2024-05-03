@@ -1,26 +1,26 @@
 from dataclasses import dataclass
 
-from shared.base import BaseCommand
+from shared.base import Command
 
 
 @dataclass
-class UserRegisterCommand(BaseCommand):
+class UserRegisterCommand(Command):
     email: str
     password: str
 
 
 @dataclass
-class UserAuthenticateCommand(BaseCommand):
+class UserAuthenticateCommand(Command):
     email: str
     password: str
 
 
 @dataclass
-class UserAddAvatarCommand(BaseCommand):
+class UserAddAvatarCommand(Command):
     user_id: int
     file_id: int
 
 
 @dataclass
-class VerifyTokenCommand(BaseCommand):
+class VerifyTokenCommand(Command):
     token: str
