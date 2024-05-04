@@ -22,9 +22,8 @@ class Env(BaseSettings):
 
     # Minio
     MINIO_ENDPOINT: str = "localhost:9000"
-    MINIO_ACCESS_KEY: str = "minio"
-    MINIO_SECRET_KEY: str = "minio123"
-    MINIO_BUCKET_NAME: str = "files"
+    MINIO_ROOT_USER: str = "minio"
+    MINIO_ROOT_PASSWORD: str = "minio123"
 
     # RabbitMQ
     RABBITMQ_HOST: str = "rabbitmq"
