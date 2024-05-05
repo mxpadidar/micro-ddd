@@ -26,6 +26,6 @@ class User(BaseEntity):
             "email": self.email,
             "is_superuser": self.is_superuser,
             "is_active": self.is_active,
-            "avatar": kwargs.pop("avatar", self.avatar_file_id),
+            "avatar": kwargs.pop("avatar", {"id": self.avatar_file_id}),
             **kwargs,
         }

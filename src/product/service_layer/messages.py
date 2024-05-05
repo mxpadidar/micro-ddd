@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 
 from shared.base import Command
-from shared.protocols import UserProtocol
+from shared.dtos import UserDto
 
 
 @dataclass
 class CreateProduct(Command):
-    user: UserProtocol
+    user: UserDto
     name: str
     price: float
+    avatar_file_id: int

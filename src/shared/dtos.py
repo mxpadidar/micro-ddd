@@ -22,7 +22,32 @@ class TokenDto(BaseDto):
 
 
 @dataclass
+class UserDto(BaseDto):
+    id: int
+    email: str
+    is_active: bool
+    avatar: int | None
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "UserDto":
+        return cls(
+            id=data["id"],
+            email=data["email"],
+            is_active=data["is_active"],
+            avatar=data.get("avatar"),
+        )
+
+
+@dataclass
 class FileDto(BaseDto):
     id: int
-    object_name: str
+    name: str
     url: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "FileDto":
+        return cls(
+            id=data["id"],
+            name=data["name"],
+            url=data["url"],
+        )

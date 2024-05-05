@@ -1,11 +1,13 @@
 from product.adapters.orm.mapper import start_mappers
 from product.adapters.unit_of_work_impl import UnitOfWorkImpl
 from product.service_layer.command_handlers import command_handlers_mapper
+from product.service_layer.container import Container
 from product.service_layer.query_handlers import query_handlers_mapper
 from shared.auth_service import AuthService
 from shared.message_broker import MessageBroker, RedisMessageBroker
 from shared.message_bus import MessageBus
-from shared.settings import REDIS_DB, REDIS_HOST, REDIS_PORT
+from shared.settings import REDIS_DB, REDIS_HOST, REDIS_PORT, STORAGE_SERVICE_URL
+from shared.storage_service import StorageService
 from shared.utils import inject_dependencies
 
 start_mappers()
@@ -20,8 +22,23 @@ message_broker: MessageBroker = RedisMessageBroker(
 
 auth_service = AuthService()
 
+storage_service = StorageService(STORAGE_SERVICE_URL)
 
-DEPENDENCIES = {"uow": uow, "message_broker": message_broker}
+
+container = Container(
+    uow=uow,
+    storage_service=storage_service,
+    message_broker=message_broker,
+    auth_service=auth_service,
+)
+
+
+DEPENDENCIES = {
+    "uow": uow,
+    "message_broker": message_broker,
+    "auth_service": auth_service,
+    "storage_service": storage_service,
+}
 
 
 INJECTED_COMMAND_HANDLERS = {

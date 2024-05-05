@@ -13,18 +13,10 @@ class MinioClient(S3Client):
 
     _client: Minio | None = None
 
-    def __init__(
-        self, endpoint: str, access_key: str, secret_key: str, bucket: str = "default"
-    ) -> None:
+    def __init__(self, endpoint: str, access_key: str, secret_key: str) -> None:
         self._endpoint = endpoint
         self._access_key = access_key
         self._secret_key = secret_key
-        self._bucket = bucket
-        self._ensure_bucket_exists()
-
-    @property
-    def base_url(self) -> str:
-        return f"{self._endpoint}/{self._bucket}"
 
     @property
     def client(self) -> Minio:
@@ -38,25 +30,31 @@ class MinioClient(S3Client):
             )
         return self._client
 
-    def upload(self, file: bytes, object_name: str) -> None:
+    def upload(self, file: bytes, bucket: str, file_name: str) -> None:
+        self._ensure_bucket_exists(bucket)
         try:
             self.client.put_object(
                 data=BytesIO(file),
-                bucket_name=self._bucket,
-                object_name=object_name,
+                bucket_name=bucket,
+                object_name=file_name,
                 length=len(file),
             )
         except Exception as error:
             logger.error(f"Error uploading file: {error}")
             raise FileUploadError
 
-    def delete(self, object_name: str) -> None:
+    def delete(self, bucket: str, file_name: str) -> None:
         try:
-            self.client.remove_object(bucket_name=self._bucket, object_name=object_name)
+            self.client.remove_object(bucket_name=bucket, object_name=file_name)
         except Exception as error:
             logger.error(f"Error deleting file: {error}")
             raise FileDeleteError
 
-    def _ensure_bucket_exists(self):
-        if not self.client.bucket_exists(self._bucket):
-            self.client.make_bucket(self._bucket)
+    def get_file_url(self, bucket: str, file_name: str) -> str:
+        return self.client.presigned_get_object(
+            bucket_name=bucket, object_name=file_name
+        )
+
+    def _ensure_bucket_exists(self, bucket: str):
+        if not self.client.bucket_exists(bucket_name=bucket):
+            self.client.make_bucket(bucket)

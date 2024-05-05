@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
 
 from auth.bootstrap import bus
+from auth.domain.entities.user import User
 from auth.entrypoints import request_models as rm
 from auth.entrypoints.dependencies import get_current_user
 from auth.service_layer import commands
-from shared.protocols import UserProtocol
 
 router = APIRouter(prefix="/users", tags=["User"])
 
@@ -29,12 +29,12 @@ async def login_user(data: rm.UserLoginRequest):
 
 @router.put("/avatar")
 async def add_user_avatar(
-    data: rm.UserAvatarRequest, user: UserProtocol = Depends(get_current_user)
+    data: rm.UserAvatarRequest, user: User = Depends(get_current_user)
 ):
     command = commands.UserAddAvatarCommand(user_id=user.id, file_id=data.file_id)
     return await bus.handle(command)
 
 
 @router.get("/me")
-def user_profile(user: UserProtocol = Depends(get_current_user)):
+def user_profile(user: User = Depends(get_current_user)):
     return user.serialize()

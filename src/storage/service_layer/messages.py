@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 
 from shared.base import Command, Event, Query
-from shared.protocols import UserProtocol
+from shared.dtos import UserDto
+from storage.domain.enums import FileBucket
 
 
 @dataclass
@@ -12,18 +13,12 @@ class GetFileQuery(Query):
 @dataclass
 class CreateFileCommand(Command):
     file_bytes: bytes
-    category: str
-    name: str
-    user: UserProtocol
-
-    def to_dict(self) -> dict:
-        return {"category": self.category, "name": self.name, "user": self.user}
+    bucket: FileBucket
+    name: str | None
+    user: UserDto
 
 
 @dataclass
 class FileCreatedEvent(Event):
     file_id: int
-    user: UserProtocol
-
-    def to_dict(self) -> dict:
-        return {"file_id": self.file_id, "user": self.user}
+    user: UserDto

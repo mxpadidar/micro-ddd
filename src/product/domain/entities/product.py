@@ -6,12 +6,10 @@ class Product(BaseEntity):
     price: float
     avatar_file_id: int
 
-    def __init__(self, name: str, price: float) -> None:
+    def __init__(self, name: str, price: float, avatar_file_id: int):
         self.name = name
         self.price = price
-
-    def add_avatar(self, file_id: int) -> None:
-        self.avatar_file_id = file_id
+        self.avatar_file_id = avatar_file_id
 
     def serialize(self, **kwargs) -> dict:
         return {

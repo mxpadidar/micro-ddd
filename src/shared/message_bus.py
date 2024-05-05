@@ -31,7 +31,6 @@ class MessageBus:
                 self._handle_query(message)
             if isinstance(message, Event):
                 self._handle_event(message)
-
         return self.response
 
     def _handle_event(self, event: Event):

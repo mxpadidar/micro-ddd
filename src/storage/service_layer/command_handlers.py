@@ -16,6 +16,9 @@ def create_file_handler(
     command: CreateFileCommand, uow: UnitOfWork, s3_client: S3Client
 ) -> dict:
 
+    if not command.name:
+        raise InvalidRequestError
+
     mime_type = get_mime_type(command.file_bytes)
 
     if mime_type not in File.valid_mime_types():
@@ -23,11 +26,13 @@ def create_file_handler(
 
     name = generate_unique_filename(command.name)
     size = len(command.file_bytes)
-    object_name = command.category + "/" + name
 
-    s3_client.upload(command.file_bytes, object_name)
+    s3_client.upload(
+        file=command.file_bytes, bucket=command.bucket.value, file_name=command.name
+    )
 
-    file = File(category=command.category, name=name, mime_type=mime_type, size=size)
+    file = File(bucket=command.bucket.value, name=name, mime_type=mime_type, size=size)
+
     with uow:
         uow.files.add(file)
         uow.commit()

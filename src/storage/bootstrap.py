@@ -15,6 +15,7 @@ from storage.adapters.orm.mapper import start_mappers
 from storage.adapters.unit_of_work_impl import UnitOfWorkImpl
 from storage.domain.s3_client import S3Client
 from storage.service_layer.command_handlers import command_handlers_mapper
+from storage.service_layer.container import Container
 from storage.service_layer.query_handlers import query_handlers_mapper
 
 start_mappers()
@@ -33,6 +34,13 @@ message_broker: MessageBroker = RedisMessageBroker(
 )
 
 auth_service = AuthService()
+
+container = Container(
+    uow=uow,
+    s3_client=s3_client,
+    message_broker=message_broker,
+    auth_service=auth_service,
+)
 
 
 DEPENDENCIES = {"uow": uow, "s3_client": s3_client, "message_broker": message_broker}
