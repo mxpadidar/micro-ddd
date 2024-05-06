@@ -3,22 +3,19 @@ from typing import Callable, Type
 from xml.dom import NotFoundErr
 
 from auth.domain.jwt_service import JWTService
-from auth.domain.unit_of_work import UnitOfWork
 from auth.domain.user_manager import UserManager
-from auth.service_layer.commands import (
-    UserAddAvatarCommand,
-    UserAuthenticateCommand,
-    UserRegisterCommand,
-    VerifyTokenCommand,
-)
+from auth.service_layer import messages
 from shared.base import Command
 from shared.dtos import TokenPayload
 from shared.errors import ConflictError, InvalidCredentialsError
+from shared.message_broker import MessageBroker
 from shared.storage_service import StorageService
 
 
 def verify_token_handler(
-    command: VerifyTokenCommand, user_manager: UserManager, jwt_service: JWTService
+    command: messages.VerifyTokenCommand,
+    user_manager: UserManager,
+    jwt_service: JWTService,
 ):
     try:
         payload = jwt_service.decode(command.token)
@@ -29,16 +26,29 @@ def verify_token_handler(
         raise InvalidCredentialsError
 
 
-def user_register_handler(command: UserRegisterCommand, user_manager: UserManager):
+async def user_register_handler(
+    command: messages.UserRegisterCommand,
+    user_manager: UserManager,
+    storage_service: StorageService,
+    message_broker: MessageBroker,
+):
     try:
         user = user_manager.create_user(command.email, command.password)
+        if not command.avatar_file_id:
+            return user
+        avatar_file = await storage_service.get_file_by_id(command.avatar_file_id)
+        user.avatar_file_id = avatar_file.id
+        event = messages.FileUsedEvent(file_id=avatar_file.id, user_id=user.id)
+        message_broker.publish(destination="file_used", message=event.to_dict())
         return user
     except ConflictError:
         raise ConflictError
 
 
 def user_authenticate_handler(
-    command: UserAuthenticateCommand, user_manager: UserManager, jwt_service: JWTService
+    command: messages.UserAuthenticateCommand,
+    user_manager: UserManager,
+    jwt_service: JWTService,
 ):
     try:
         user = user_manager.authenticate_user(command.email, command.password)
@@ -52,21 +62,8 @@ def user_authenticate_handler(
         raise InvalidCredentialsError
 
 
-async def user_add_avatar_handler(
-    command: UserAddAvatarCommand, uow: UnitOfWork, storage_service: StorageService
-):
-    with uow:
-        user = uow.users.get(id=command.user_id)
-        avatar_url = await storage_service.get_file_by_id(command.file_id)
-        user.avatar_file_id = command.file_id
-        uow.users.add(user)
-        uow.commit()
-        return user.serialize(avatar=avatar_url)
-
-
 command_handlers_mapper: dict[Type[Command], Callable] = {
-    UserRegisterCommand: user_register_handler,
-    UserAuthenticateCommand: user_authenticate_handler,
-    UserAddAvatarCommand: user_add_avatar_handler,
-    VerifyTokenCommand: verify_token_handler,
+    messages.UserRegisterCommand: user_register_handler,
+    messages.UserAuthenticateCommand: user_authenticate_handler,
+    messages.VerifyTokenCommand: verify_token_handler,
 }

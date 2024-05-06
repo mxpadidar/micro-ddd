@@ -29,7 +29,7 @@ class RedisMessageBroker(MessageBroker):
 
     def get_message(self) -> dict | None:
         message = self.pubsub.get_message()
-        if message:
+        if message and message["type"] == "message":
             return json.loads(message["data"])
         else:
             return None

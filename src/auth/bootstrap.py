@@ -2,8 +2,8 @@ from auth.adapters.jwt_service_impl import JWTServiceImpl
 from auth.adapters.orm.mapper import start_mappers
 from auth.adapters.unit_of_work_impl import UnitOfWorkImpl
 from auth.adapters.user_manager_impl import UserManagerImpl
-from auth.service_layer.command_handlers import command_handlers_mapper
-from auth.service_layer.query_handlers import query_handlers_mapper
+from auth.service_layer.container import Container
+from auth.service_layer.handlers import command_handlers_mapper
 from shared.message_broker import MessageBroker, RedisMessageBroker
 from shared.message_bus import MessageBus
 from shared.settings import (
@@ -38,11 +38,20 @@ message_broker: MessageBroker = RedisMessageBroker(
 
 storage_service = StorageService(STORAGE_SERVICE_URL)
 
+container = Container(
+    uow=uow,
+    user_manager=user_manager,
+    jwt_service=jwt_service,
+    storage_service=storage_service,
+    message_broker=message_broker,
+)
+
 DEPENDENCIES = {
     "uow": uow,
     "user_manager": user_manager,
     "jwt_service": jwt_service,
     "storage_service": storage_service,
+    "message_broker": message_broker,
 }
 
 
@@ -51,15 +60,9 @@ INJECTED_COMMAND_HANDLERS = {
     for command_type, handler in command_handlers_mapper.items()
 }
 
-INJECTED_QUERY_HANDLERS = {
-    query_type: inject_dependencies(handler, DEPENDENCIES)
-    for query_type, handler in query_handlers_mapper.items()
-}
-
 
 bus = MessageBus(
     uow=UnitOfWorkImpl(),
     message_broker=message_broker,
     command_handlers=INJECTED_COMMAND_HANDLERS,
-    query_handlers=INJECTED_QUERY_HANDLERS,
 )

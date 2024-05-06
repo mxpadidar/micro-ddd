@@ -4,6 +4,7 @@ from pydantic import BaseModel
 class UserRegisterRequest(BaseModel):
     email: str
     password: str
+    avatar_file_id: int | None
 
 
 class UserLoginRequest(BaseModel):

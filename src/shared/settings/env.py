@@ -31,7 +31,7 @@ class Env(BaseSettings):
     RABBITMQ_DEFAULT_PASS: str = "guest"
 
     # Redis
-    REDIS_HOST: str = "redis-broker"
+    REDIS_HOST: str = "redis"
     REDIS_PORT: int = 6379
     REDIS_DB: int = 0
 

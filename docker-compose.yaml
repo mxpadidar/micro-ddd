@@ -22,18 +22,6 @@ services:
       - ./.data/minio:/data
     command: server /data --console-address ":9001"
 
-  # rabbitmq:
-  #   image: rabbitmq:management
-  #   container_name: rabbitmq-broker
-  #   ports:
-  #     - 5672:5672
-  #     - 15672:15672
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - ./.data/rabbitmq:/var/lib/rabbitmq
-
-
   redis:
     image: redis:latest
     container_name: redis-broker
@@ -76,20 +64,16 @@ services:
       - ./src:/app
     command: uvicorn main:app --host 0.0.0.0 --port 8002 --reload
 
-  product:
-    container_name: product-service
+  celery:
+    container_name: celery-worker
     build:
       context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8003:8003"
+      dockerfile: dockerfile
     depends_on:
       - postgres
       - redis
-      - auth
-      - storage
     env_file:
       - .env
     volumes:
       - ./src:/app
-    command: uvicorn main:app --host 0.0.0.0 --port 8003 --reload
+    command: bash -c "python start_tasks.py && celery -A workers.main.app worker --loglevel=info"

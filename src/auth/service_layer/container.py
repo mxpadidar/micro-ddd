@@ -1,5 +1,6 @@
-from product.domain.unit_of_work import UnitOfWork
-from shared.auth_service import AuthService
+from auth.domain.jwt_service import JWTService
+from auth.domain.unit_of_work import UnitOfWork
+from auth.domain.user_manager import UserManager
 from shared.message_broker import MessageBroker
 from shared.storage_service import StorageService
 
@@ -10,12 +11,14 @@ class Container:
         uow: UnitOfWork,
         storage_service: StorageService,
         message_broker: MessageBroker,
-        auth_service: AuthService,
+        user_manager: UserManager,
+        jwt_service: JWTService,
     ):
         self._uow = uow
         self._storage_service = storage_service
         self._message_broker = message_broker
-        self._auth_service = auth_service
+        self._user_manager = user_manager
+        self._jwt_service = jwt_service
 
     @property
     def uow(self):
@@ -30,5 +33,9 @@ class Container:
         return self._message_broker
 
     @property
-    def auth_service(self):
-        return self._auth_service
+    def user_manager(self):
+        return self._user_manager
+
+    @property
+    def jwt_service(self):
+        return self._jwt_service

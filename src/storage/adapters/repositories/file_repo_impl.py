@@ -13,6 +13,8 @@ class FileRepoImpl(FileRepo):
         self.session.add(file)
 
     def _get(self, id: int) -> File:
+        print("=======================================================")
+        print("id===================", id)
         file = self.session.query(File).filter_by(id=id).first()
         if not file:
             raise NotFoundError
